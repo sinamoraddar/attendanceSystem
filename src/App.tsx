@@ -12,9 +12,10 @@ import {
 import { AuthContext } from "contexts/AuthContext";
 import MainPage from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/signUpForm/SignUpForm";
+const initialCurrentUserState = { name: "", phoneNumber: "" };
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState({ name: "", phoneNumber: "" });
+  const [currentUser, setCurrentUser] = useState(initialCurrentUserState);
   const history = useHistory();
   useEffect(() => {
     let localUser = localStorage.getItem(
@@ -23,21 +24,20 @@ function App() {
     if (localUser !== null) {
       setCurrentUser(JSON.parse(localUser));
     }
-  }, []);
-  useEffect(() => {
-    if (isAuthenticated) {
-      history.push("/");
-    }
   }, [isAuthenticated]);
   const OnExit = useCallback(() => {
     localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
+    setCurrentUser(initialCurrentUserState);
+    setIsAuthenticated(false);
   }, []);
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, currentUser, setIsAuthenticated }}
     >
       <Router>
-        <button onClick={OnExit}>خروج</button>
+        {currentUser.name !== "" ? (
+          <button onClick={OnExit}>خروج</button>
+        ) : null}
         <Switch>
           <Route path="/" exact component={MainPage} />
           <Route path="/authentication" exact component={AuthenticationPage} />

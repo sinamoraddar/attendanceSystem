@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import { TextField } from "@material-ui/core";
 import { AuthContext } from "contexts/AuthContext";
+import { Redirect } from "react-router-dom";
 //constants
 enum InputTypes {
   Name = "Name",
@@ -17,7 +18,9 @@ interface FormInterface {
 }
 const SignUpForm = ({ type }: FormInterface) => {
   //context
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, setIsAuthenticated, isAuthenticated } = useContext(
+    AuthContext
+  );
   //state
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -25,14 +28,24 @@ const SignUpForm = ({ type }: FormInterface) => {
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      alert(`${name} ${phoneNumber}`);
-      localStorage.setItem(
-        AuthenticationConstants.AuthenticatedUser,
-        JSON.stringify({ name, phoneNumber })
-      );
+
+      if (type === AuthenticationConstants.SignUp) {
+        localStorage.setItem(
+          AuthenticationConstants.AuthenticatedUser,
+          JSON.stringify({ name, phoneNumber })
+        );
+        setIsAuthenticated(true);
+      } else {
+        if (phoneNumber === currentUser.phoneNumber) {
+          setIsAuthenticated(true);
+        } else {
+          alert("Invalid credentials");
+        }
+      }
     },
-    [name, phoneNumber]
+    [name, phoneNumber, setIsAuthenticated, currentUser, type]
   );
+
   const onInputChange = useCallback((label, e: any) => {
     console.log(e.target.value, label);
     const { value } = e.target;
@@ -49,7 +62,9 @@ const SignUpForm = ({ type }: FormInterface) => {
       }
     }
   }, []);
-  return (
+  return isAuthenticated ? (
+    <Redirect to="/" />
+  ) : (
     <form onSubmit={onSubmit}>
       {type === AuthenticationConstants.SignUp ? (
         <>
@@ -85,7 +100,7 @@ const SignUpForm = ({ type }: FormInterface) => {
         </>
       )}
 
-      <button type="submit">ثبت نام</button>
+      <button type="submit">{type}</button>
     </form>
   );
 };

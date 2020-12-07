@@ -4,10 +4,13 @@ import SignUpForm, {
   AuthenticationConstants,
 } from "components/forms/signUpForm/SignUpForm";
 import { AuthContext } from "contexts/AuthContext";
+import { Redirect } from "react-router-dom";
 
 const AuthenticationPage = () => {
-  const { currentUser } = useContext(AuthContext);
-  return (
+  const { currentUser, isAuthenticated } = useContext(AuthContext);
+  return isAuthenticated ? (
+    <Redirect to="/" />
+  ) : (
     <div>
       {currentUser.name}
       <SignUpForm
