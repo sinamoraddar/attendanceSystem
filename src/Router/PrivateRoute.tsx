@@ -1,6 +1,7 @@
-import { AuthContext } from "contexts/AuthContext";
+import { AuthContext } from "utils/contexts/AuthContext";
 import React, { useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
+import { Routes } from "utils/types";
 
 export interface RouteInterface {
   children?: any;
@@ -25,7 +26,7 @@ const PrivateRoute = ({
         ) : (
           <Redirect
             to={{
-              pathname: "/authentication",
+              pathname: Routes.Authentication,
             }}
           />
         )

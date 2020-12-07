@@ -1,0 +1,24 @@
+@import "assets/styles/sass/index.scss";
+
+.header {
+  background-color: $blue;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $normalPadding;
+  color: white;
+  h1 {
+    flex: 1 auto;
+    text-align: right;
+  }
+  button {
+    font-size: 1em;
+  }
+  @media screen and(max-width:$tabletBreakpoint) {
+    & {
+      font-size: 0.5em;
+    }
+  }
+}

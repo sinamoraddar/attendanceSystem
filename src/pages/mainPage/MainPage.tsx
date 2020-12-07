@@ -1,17 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
-import { AuthContext } from "contexts/AuthContext";
-import { WeekDays } from "App";
+//third party components
 import moment from "moment";
+import { Button, InputLabel, MenuItem, Select } from "@material-ui/core";
+//utils
+import { AuthContext } from "utils/contexts/AuthContext";
+import { WeekDays, WorkTypes } from "utils/types";
 //styles
 import styles from "./MainPage.module.scss";
-import { Button, InputLabel, MenuItem, Select } from "@material-ui/core";
-
-export enum WorkTypes {
-  All = "همه",
-  InOffice = "حضوری",
-  Remote = "ریموت",
-}
 
 const MainPage = ({
   SubmitEntrance,
@@ -21,7 +16,7 @@ const MainPage = ({
   SubmitExit: ({ workDescription }: { workDescription: string }) => void;
 }) => {
   //context
-  const { isAuthenticated, currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   //state
   const [error, setError] = useState<string>("");
   const [workType, setWorkType] = useState<WorkTypes>(WorkTypes.InOffice);
@@ -37,14 +32,12 @@ const MainPage = ({
     setWorkDescription(value);
   }, []);
   useEffect(() => {
-    if (
-      new Date().getDay() === WeekDays.Thursday ||
-      new Date().getDay() === WeekDays.Friday
-    ) {
+    const today = new Date().getDay();
+    if (today === WeekDays.Thursday || today === WeekDays.Friday) {
       setError("ثبت ورود و خروج در روز های تعطیل امکان پذیر نیست");
     }
   }, []);
-  return isAuthenticated ? (
+  return (
     <div className={styles.container}>
       {error.length > 0 ? (
         <h3>{error}</h3>
@@ -115,8 +108,6 @@ const MainPage = ({
         </div>
       )}
     </div>
-  ) : (
-    <Redirect to="/authentication" />
   );
 };
 

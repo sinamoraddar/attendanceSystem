@@ -1,24 +1,19 @@
 import React, { useCallback, useContext, useState } from "react";
+//third party components
 import { Button, TextField } from "@material-ui/core";
-import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
+//contexts
+import { AuthContext } from "utils/contexts/AuthContext";
+import {
+  AuthenticationConstants,
+  FormInterface,
+  InputTypes,
+} from "utils/types";
 //styles
 import styles from "./AuthForm.module.scss";
-//constants
-enum InputTypes {
-  Name = "Name",
-  PhoneNumber = "Phone number",
-}
-export enum AuthenticationConstants {
-  AuthenticatedUser = "AuthenticatedUser",
-  SignUp = "SignUp",
-  LogIn = "LogIn",
-}
-type FormTypes = AuthenticationConstants.SignUp | AuthenticationConstants.LogIn;
-interface FormInterface {
-  type: FormTypes;
-}
-const SignUpForm = ({ type }: FormInterface) => {
+
+//component
+const AuthForm = ({ type }: FormInterface) => {
   //context
   const {
     currentUser,
@@ -33,14 +28,13 @@ const SignUpForm = ({ type }: FormInterface) => {
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-
       if (type === AuthenticationConstants.SignUp) {
         signUpTheUser({ name, phoneNumber });
       } else {
         if (phoneNumber === currentUser.phoneNumber) {
           setIsAuthenticated(true);
         } else {
-          alert("Invalid credentials");
+          alert("اطلاعات نا معتبر است");
         }
       }
     },
@@ -63,9 +57,7 @@ const SignUpForm = ({ type }: FormInterface) => {
     }
   }, []);
 
-  return isAuthenticated ? (
-    <Redirect to="/" />
-  ) : (
+  return (
     <>
       <form onSubmit={onSubmit} className={styles.form}>
         {type === AuthenticationConstants.SignUp ? (
@@ -75,7 +67,7 @@ const SignUpForm = ({ type }: FormInterface) => {
               autoFocus
               required
               id="standard-required"
-              label={"نام"}
+              label={InputTypes.Name}
               value={name}
               onChange={onInputChange.bind(null, InputTypes.Name)}
               type="text"
@@ -83,7 +75,7 @@ const SignUpForm = ({ type }: FormInterface) => {
             <TextField
               required
               id="standard-required"
-              label={"شماره تلفن"}
+              label={InputTypes.PhoneNumber}
               type="number"
               value={phoneNumber}
               onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
@@ -95,7 +87,7 @@ const SignUpForm = ({ type }: FormInterface) => {
             <TextField
               required
               id="standard-required"
-              label={"شماره تلفن"}
+              label={InputTypes.PhoneNumber}
               type="number"
               value={phoneNumber}
               autoFocus
@@ -112,4 +104,4 @@ const SignUpForm = ({ type }: FormInterface) => {
   );
 };
 
-export default SignUpForm;
+export default AuthForm;

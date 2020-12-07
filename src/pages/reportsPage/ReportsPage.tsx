@@ -1,10 +1,6 @@
-import { AuthContext } from "contexts/AuthContext";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+//third party components
 import moment from "moment";
-import { WorkTypes } from "pages/mainPage/MainPage";
-//styles
-import styles from "./ReportsPage.module.scss";
 import {
   Select,
   Table,
@@ -12,13 +8,19 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  InputLabel,
+  TextField,
+  MenuItem,
 } from "@material-ui/core";
-import { InputLabel, TextField } from "@material-ui/core";
-import { MenuItem } from "@material-ui/core";
+//utils
+import { AuthContext } from "utils/contexts/AuthContext";
+import { WorkTypes } from "utils/types";
+//styles
+import styles from "./ReportsPage.module.scss";
+//component
 const ReportsPage = () => {
   //context
   const {
-    isAuthenticated,
     currentUser: { activityLog },
   } = useContext(AuthContext);
   //state
@@ -81,7 +83,8 @@ const ReportsPage = () => {
     const basicInterval = setInterval(handleCurrentWorkDuration, 1000);
     return () => clearInterval(basicInterval);
   }, [activityLog, handleCurrentWorkDuration]);
-  return isAuthenticated ? (
+  //render
+  return (
     <div className={styles.container}>
       <div className={styles.innerBox}>
         <div className={styles.header}>
@@ -144,11 +147,13 @@ const ReportsPage = () => {
                           {workType}
                         </TableCell>
                         <TableCell align="right">
-                          {moment(entranceTime).format("MMMM Do YYYY, h:mm:ss")}
+                          {moment(entranceTime).format(
+                            "MMMM Do YYYY, HH:mm:ss"
+                          )}
                         </TableCell>
                         <TableCell align="right">
                           {exitTime !== null ? (
-                            moment(exitTime).format("MMMM Do YYYY, h:mm:ss")
+                            moment(exitTime).format("MMMM Do YYYY, HH:mm:ss")
                           ) : (
                             <span className={styles.red}>
                               هنوز خارج نشده اید
@@ -176,8 +181,6 @@ const ReportsPage = () => {
         )}
       </div>
     </div>
-  ) : (
-    <Redirect to="/authentication" />
   );
 };
 

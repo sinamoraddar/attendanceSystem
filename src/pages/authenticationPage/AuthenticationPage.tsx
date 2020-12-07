@@ -1,18 +1,19 @@
 import React, { useContext } from "react";
-import SignUpForm, {
-  AuthenticationConstants,
-} from "components/forms/authForm/AuthForm";
-import { AuthContext } from "contexts/AuthContext";
+//third party components
 import { Redirect } from "react-router-dom";
+//components
+import AuthForm from "components/authForm/AuthForm";
 //styles
 import styles from "./AuthenticationPage.module.scss";
+//utils
+import { AuthContext } from "utils/contexts/AuthContext";
+import { AuthenticationConstants } from "utils/types";
+
 const AuthenticationPage = () => {
-  const { currentUser, isAuthenticated } = useContext(AuthContext);
-  return isAuthenticated ? (
-    <Redirect to="/" />
-  ) : (
+  const { currentUser } = useContext(AuthContext);
+  return (
     <div className={styles.container}>
-      <SignUpForm
+      <AuthForm
         type={
           currentUser.name === ""
             ? AuthenticationConstants.SignUp

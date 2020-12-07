@@ -1,92 +1,25 @@
 import React, { useCallback, useEffect, useState } from "react";
+//third party components
 import moment from "moment";
 import { nanoid } from "nanoid";
-import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
+//utils
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useHistory,
-  Link,
-} from "react-router-dom";
-import { AuthContext } from "contexts/AuthContext";
-import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
-import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
-import { initialCurrentUserState } from "contexts/AuthContext";
-import ReportsPage from "pages/reportsPage/ReportsPage";
-import ListAltIcon from "@material-ui/icons/ListAlt";
-import HomeIcon from "@material-ui/icons/Home";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-} from "@material-ui/core";
-import { Avatar } from "@material-ui/core";
-import PrivateRoute from "Router/PrivateRoute";
-import PublicRoute from "Router/PublicRoute";
+  AuthContext,
+  initialCurrentUserState,
+} from "utils/contexts/AuthContext";
+import { UserShape, WorkTypes, AuthenticationConstants } from "utils/types";
 //styles
-import styles from "./App.module.scss";
-export enum WeekDays {
-  Sunday,
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-}
-export interface EntranceShape {
-  workType: WorkTypes;
-  workDescription: string;
-}
-export interface UserShape {
-  name: string;
-  phoneNumber: string;
+import "./App.module.scss";
+import Router from "Router/Router";
 
-  activityLog: {
-    id: string;
-    hasEntered: boolean;
-    hasExited: boolean;
-    entranceTime: Date | null;
-    exitTime: Date | null;
-    workType: WorkTypes | null;
-    workDescription: string;
-  }[];
-}
 function App() {
   //state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserShape>(
     initialCurrentUserState
   );
-  const [value, setValue] = useState(0);
-  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
-  const [
-    isConfirmationDialogVisible,
-    setIsConfirmationDialogVisible,
-  ] = useState<boolean>(false);
+  const [dialogMessage, setDialogMessage] = useState<string>("");
 
-  //third party hooks
-  const history = useHistory();
-  //life cycle hooks
-
-  useEffect(() => {
-    // if (isAuthenticated) {
-    switch (value) {
-      case 0: {
-        // history.push("/");
-        break;
-      }
-      case 1: {
-        // history.push("/details");
-        break;
-      }
-    }
-    // }
-  }, [value, history, isAuthenticated]);
   //callbacks
   const signUpTheUser = useCallback(
     ({ name, phoneNumber }: { name: string; phoneNumber: string }) => {
@@ -99,7 +32,7 @@ function App() {
     },
     []
   );
-  const SubmitEntrance = useCallback(
+  const submitEntrance = useCallback(
     ({ workType }: { workType: WorkTypes }) => {
       setCurrentUser((currentUser) => ({
         ...currentUser,
@@ -119,16 +52,16 @@ function App() {
     },
     []
   );
-  const SubmitExit = useCallback(
+  const submitExit = useCallback(
     ({ workDescription }: { workDescription: string }) => {
       if (currentUser.activityLog.length > 0) {
-        console.log("left");
         const now = moment();
         const lastTime = moment(
           currentUser.activityLog[currentUser.activityLog.length - 1]
             .entranceTime
         );
-        if (!(now.diff(lastTime, "minute") > 10)) {
+        //let the user exit if it's been more than 10 minutes since their last entrance
+        if (now.diff(lastTime, "minute") > 10) {
           setCurrentUser((currentUser) => {
             const newActivityLog = currentUser.activityLog.map(
               (activity, index, array) => {
@@ -148,7 +81,7 @@ function App() {
             };
           });
         } else {
-          alert(
+          setDialogMessage(
             "خطا!برای ثبت خروج باید از آخرین ورود شما بیش از 10 دقیقه گذشته باشد"
           );
         }
@@ -156,32 +89,7 @@ function App() {
     },
     [currentUser]
   );
-
-  const handleCancel = useCallback(() => {
-    setIsConfirmationDialogVisible(false);
-  }, []);
-  const handleOk = useCallback(() => {
-    setIsConfirmationDialogVisible(false);
-    localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
-    setCurrentUser(initialCurrentUserState);
-    setIsAuthenticated(false);
-  }, []);
   //life cycle hooks
-  useEffect(() => {
-    if (isAuthenticated) {
-      setIsDialogVisible(true);
-    }
-  }, [isAuthenticated]);
-  useEffect(() => {
-    //handle dialog visibility
-    let timeout: NodeJS.Timeout;
-    if (isDialogVisible) {
-      setTimeout(() => {
-        setIsDialogVisible(false);
-      }, 1000);
-    }
-    return () => clearTimeout(timeout);
-  }, [isDialogVisible]);
   //get the current user from local storage on the initial render
   useEffect(() => {
     let localUser = localStorage.getItem(
@@ -198,21 +106,7 @@ function App() {
         JSON.stringify(currentUser)
       );
     }
-    if (currentUser.activityLog.length > 0) {
-      const lastActivityTime =
-        currentUser.activityLog[currentUser.activityLog.length - 1]
-          .entranceTime;
-      if (lastActivityTime !== null) {
-        console.log(
-          moment(lastActivityTime).format("MMMM Do YYYY, h:mm:ss a"),
-          WeekDays[new Date(lastActivityTime).getDay()]
-        );
-      }
-    }
   }, [currentUser]);
-  const OnExit = useCallback(() => {
-    setIsConfirmationDialogVisible(true);
-  }, []);
 
   return (
     <AuthContext.Provider
@@ -223,90 +117,15 @@ function App() {
         signUpTheUser,
       }}
     >
-      <Router>
-        <header className={styles.header}>
-          <h1>سامانه حضور و غیاب</h1>
-
-          {currentUser.name !== "" ? (
-            <>
-              <Button
-                color="secondary"
-                variant="contained"
-                className={styles.button}
-                onClick={OnExit}
-              >
-                خروج از سیستم
-              </Button>
-            </>
-          ) : null}
-        </header>
-        {currentUser.name !== "" && (
-          <div className={styles.avatar}>
-            <div>
-              <span>{currentUser.name}</span>
-              <Avatar>{currentUser.name.slice(0, 1).toUpperCase()}</Avatar>
-            </div>
-          </div>
-        )}
-        <Switch>
-          <PrivateRoute path="/" exact>
-            <MainPage {...{ SubmitEntrance, SubmitExit }} />
-          </PrivateRoute>
-          <PrivateRoute path="/details" exact component={ReportsPage} />
-          <PublicRoute
-            path="/authentication"
-            exact
-            component={AuthenticationPage}
-          />
-        </Switch>
-        {isAuthenticated && (
-          <BottomNavigation
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue);
-            }}
-            showLabels
-          >
-            <BottomNavigationAction
-              component={Link}
-              to="/"
-              label="خانه"
-              icon={<HomeIcon />}
-            />
-            <BottomNavigationAction
-              label="لیست گزارش ها"
-              component={Link}
-              to="/details"
-              icon={<ListAltIcon />}
-            ></BottomNavigationAction>
-          </BottomNavigation>
-        )}
-
-        <Dialog aria-labelledby="simple-dialog-title" open={isDialogVisible}>
-          <DialogTitle id="simple-dialog-title">
-            شما با موفقیت وارد شدید
-          </DialogTitle>
-        </Dialog>
-        <Dialog
-          disableBackdropClick
-          disableEscapeKeyDown
-          maxWidth="md"
-          aria-labelledby="confirmation-dialog-title"
-          open={isConfirmationDialogVisible}
-        >
-          <DialogTitle id="confirmation-dialog-title">
-            در صورت خروج تمام اطلاعات شما پاک خواهد شد . آیا مطمئن هستید؟
-          </DialogTitle>
-          <DialogActions>
-            <Button autoFocus onClick={handleCancel} color="primary">
-              خیر
-            </Button>
-            <Button onClick={handleOk} color="primary">
-              بله
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Router>
+      <Router
+        {...{
+          SubmitEntrance: submitEntrance,
+          SubmitExit: submitExit,
+          setCurrentUser,
+          dialogMessage,
+          setDialogMessage,
+        }}
+      />
     </AuthContext.Provider>
   );
 }

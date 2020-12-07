@@ -1,7 +1,8 @@
 import { Route, Redirect } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "contexts/AuthContext";
+import { AuthContext } from "utils/contexts/AuthContext";
 import { RouteInterface } from "./PrivateRoute";
+import { Routes } from "utils/types";
 const PublicRoute = ({
   children,
   component: Component,
@@ -19,7 +20,7 @@ const PublicRoute = ({
         ) : (
           <Redirect
             to={{
-              pathname: "/",
+              pathname: Routes.Home,
             }}
           />
         )

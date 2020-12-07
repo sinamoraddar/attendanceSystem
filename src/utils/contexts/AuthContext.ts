@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { UserShape } from "App";
+import { UserShape } from "utils/types";
 
 export const initialCurrentUserState: UserShape = {
   name: "",
