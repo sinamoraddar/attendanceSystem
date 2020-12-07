@@ -22,7 +22,7 @@
       color: $grey;
       font-size: 1em;
     }
-    width: 70%;
+    width: 80%;
     .header {
       background-color: $turquoise;
       padding: 1em;
@@ -34,6 +34,7 @@
       }
       > div {
         margin: 1em 0;
+        min-width: 150px;
       }
       div:last-of-type {
         label {

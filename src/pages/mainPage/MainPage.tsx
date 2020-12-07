@@ -15,9 +15,9 @@ import {
 } from "@material-ui/core";
 
 export enum WorkTypes {
-  All = "All",
-  InOffice = "In Office",
-  Remote = "Remote",
+  All = "همه",
+  InOffice = "حضوری",
+  Remote = "ریموت",
 }
 
 const MainPage = ({

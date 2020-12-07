@@ -4,7 +4,7 @@ import { Link, Redirect } from "react-router-dom";
 import moment from "moment";
 import { WorkTypes } from "pages/mainPage/MainPage";
 //styles
-import styles from "./DetailsPage.module.scss";
+import styles from "./ReportsPage.module.scss";
 import {
   Select,
   Table,
@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import { InputLabel, TextField } from "@material-ui/core";
 import { MenuItem } from "@material-ui/core";
-const DetailsPage = () => {
+const ReportsPage = () => {
   //context
   const {
     isAuthenticated,
@@ -181,4 +181,4 @@ const DetailsPage = () => {
   );
 };
 
-export default DetailsPage;
+export default ReportsPage;

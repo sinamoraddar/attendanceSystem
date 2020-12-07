@@ -14,7 +14,7 @@ import { AuthContext } from "contexts/AuthContext";
 import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
 import { initialCurrentUserState } from "contexts/AuthContext";
-import DetailsPage from "pages/detailsPage/DetailsPage";
+import ReportsPage from "pages/reportsPage/ReportsPage";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import HomeIcon from "@material-ui/icons/Home";
 import {
@@ -23,6 +23,7 @@ import {
   Button,
   Dialog,
   DialogTitle,
+  DialogActions,
 } from "@material-ui/core";
 import { Avatar } from "@material-ui/core";
 //styles
@@ -62,6 +63,10 @@ function App() {
   );
   const [value, setValue] = useState(0);
   const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
+  const [
+    isConfirmationDialogVisible,
+    setIsConfirmationDialogVisible,
+  ] = useState<boolean>(false);
 
   //third party hooks
   const history = useHistory();
@@ -151,6 +156,15 @@ function App() {
     [currentUser]
   );
 
+  const handleCancel = useCallback(() => {
+    setIsConfirmationDialogVisible(false);
+  }, []);
+  const handleOk = useCallback(() => {
+    setIsConfirmationDialogVisible(false);
+    localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
+    setCurrentUser(initialCurrentUserState);
+    setIsAuthenticated(false);
+  }, []);
   //life cycle hooks
   useEffect(() => {
     if (isAuthenticated) {
@@ -196,14 +210,7 @@ function App() {
     }
   }, [currentUser]);
   const OnExit = useCallback(() => {
-    const confirmed = window.confirm(
-      "در صورت خروج تمام اطلاعات شما پاک خواهد شد . آیا مطمئن هستید؟"
-    );
-    if (confirmed) {
-      localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
-      setCurrentUser(initialCurrentUserState);
-      setIsAuthenticated(false);
-    }
+    setIsConfirmationDialogVisible(true);
   }, []);
 
   return (
@@ -246,7 +253,7 @@ function App() {
             exact
             render={(props) => <MainPage {...{ SubmitEntrance, SubmitExit }} />}
           />
-          <Route path="/details" exact component={DetailsPage} />
+          <Route path="/details" exact component={ReportsPage} />
           <Route path="/authentication" exact component={AuthenticationPage} />
         </Switch>
         {isAuthenticated && (
@@ -276,6 +283,25 @@ function App() {
           <DialogTitle id="simple-dialog-title">
             شما با موفقیت وارد شدید
           </DialogTitle>
+        </Dialog>
+        <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
+          maxWidth="md"
+          aria-labelledby="confirmation-dialog-title"
+          open={isConfirmationDialogVisible}
+        >
+          <DialogTitle id="confirmation-dialog-title">
+            در صورت خروج تمام اطلاعات شما پاک خواهد شد . آیا مطمئن هستید؟
+          </DialogTitle>
+          <DialogActions>
+            <Button autoFocus onClick={handleCancel} color="primary">
+              خیر
+            </Button>
+            <Button onClick={handleOk} color="primary">
+              بله
+            </Button>
+          </DialogActions>
         </Dialog>
       </Router>
     </AuthContext.Provider>
