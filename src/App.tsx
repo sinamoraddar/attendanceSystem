@@ -7,7 +7,6 @@ import {
   Switch,
   Route,
   useHistory,
-  Redirect,
   Link,
 } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
@@ -26,6 +25,8 @@ import {
   DialogActions,
 } from "@material-ui/core";
 import { Avatar } from "@material-ui/core";
+import PrivateRoute from "Router/PrivateRoute";
+import PublicRoute from "Router/PublicRoute";
 //styles
 import styles from "./App.module.scss";
 export enum WeekDays {
@@ -248,13 +249,15 @@ function App() {
           </div>
         )}
         <Switch>
-          <Route
-            path="/"
+          <PrivateRoute path="/" exact>
+            <MainPage {...{ SubmitEntrance, SubmitExit }} />
+          </PrivateRoute>
+          <PrivateRoute path="/details" exact component={ReportsPage} />
+          <PublicRoute
+            path="/authentication"
             exact
-            render={(props) => <MainPage {...{ SubmitEntrance, SubmitExit }} />}
+            component={AuthenticationPage}
           />
-          <Route path="/details" exact component={ReportsPage} />
-          <Route path="/authentication" exact component={AuthenticationPage} />
         </Switch>
         {isAuthenticated && (
           <BottomNavigation

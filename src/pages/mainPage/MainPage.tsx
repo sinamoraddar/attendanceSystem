@@ -1,18 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
-import { EntranceShape, WeekDays } from "App";
+import { WeekDays } from "App";
 import moment from "moment";
 //styles
 import styles from "./MainPage.module.scss";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Button,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
+import { Button, InputLabel, MenuItem, Select } from "@material-ui/core";
 
 export enum WorkTypes {
   All = "همه",

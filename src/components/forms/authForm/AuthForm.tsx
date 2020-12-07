@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
