@@ -12,8 +12,8 @@ const MainPage = ({
   SubmitEntrance,
   SubmitExit,
 }: {
-  SubmitEntrance: ({ workType }: EntranceShape) => void;
-  SubmitExit: () => void;
+  SubmitEntrance: ({ workType }: { workType: WorkTypes }) => void;
+  SubmitExit: ({ workDescription }: { workDescription: string }) => void;
 }) => {
   //context
   const { isAuthenticated, currentUser } = useContext(AuthContext);
@@ -44,7 +44,22 @@ const MainPage = ({
     ) : (
       <div>
         {currentUser.hasEntered ? (
-          <button onClick={SubmitExit}>ثبت خروج از شرکت</button>
+          <>
+            <label htmlFor="activityDetails">
+              خلاصه فعالیت هاتون رو اینجا وارد کنید
+            </label>
+
+            <textarea
+              name="activityDetails"
+              id="activityDetails"
+              placeholder="خلاصه فعالیت..."
+              onChange={onTextareaChange}
+              value={workDescription}
+            ></textarea>
+            <button onClick={SubmitExit.bind(null, { workDescription })}>
+              ثبت خروج از شرکت
+            </button>
+          </>
         ) : (
           <>
             <label htmlFor="workType">لطفا نوع کار خود را انتخاب کنید</label>
@@ -57,20 +72,8 @@ const MainPage = ({
               <option>{WorkTypes.Remote}</option>
               <option>{WorkTypes.InOffice}</option>
             </select>
-            <label htmlFor="activityDetails">
-              خلاصه فعالیت هاتون رو اینجا وارد کنید
-            </label>
 
-            <textarea
-              name="activityDetails"
-              id="activityDetails"
-              placeholder="خلاصه فعالیت..."
-              onChange={onTextareaChange}
-              value={workDescription}
-            ></textarea>
-            <button
-              onClick={SubmitEntrance.bind(null, { workType, workDescription })}
-            >
+            <button onClick={SubmitEntrance.bind(null, { workType })}>
               ثبت ورود به شرکت
             </button>
           </>

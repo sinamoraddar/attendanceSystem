@@ -2,14 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import "./App.css";
 import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
@@ -48,28 +41,36 @@ function App() {
     initialCurrentUserState
   );
   const SubmitEntrance = useCallback(
-    ({ workType, workDescription }: EntranceShape) => {
-      console.log(workType, workDescription);
+    ({ workType }: { workType: WorkTypes }) => {
       setCurrentUser((currentUser) => ({
         ...currentUser,
         hasEntered: true,
         lastActivityTime: new Date(),
-        workDescription,
         workType,
       }));
     },
     []
   );
-  const SubmitExit = useCallback(() => {
-    console.log("left");
-    setCurrentUser((currentUser) => ({
-      ...currentUser,
-      hasEntered: false,
-      lastActivityTime: new Date(),
-      workType: null,
-      workDescription: null,
-    }));
-  }, []);
+  const SubmitExit = useCallback(
+    ({ workDescription }: { workDescription: string }) => {
+      console.log("left");
+      const now = moment();
+      const lastTime = moment(currentUser.lastActivityTime);
+      if (now.diff(lastTime, "minute") > 10) {
+        setCurrentUser((currentUser) => ({
+          ...currentUser,
+          hasEntered: false,
+          lastActivityTime: new Date(),
+          workDescription,
+        }));
+      } else {
+        alert(
+          "خطا!برای ثبت خروج باید از آخرین ورود شما بیش از 10 دقیقه گذشته باشد"
+        );
+      }
+    },
+    [currentUser]
+  );
   useEffect(() => {
     let localUser = localStorage.getItem(
       AuthenticationConstants.AuthenticatedUser
