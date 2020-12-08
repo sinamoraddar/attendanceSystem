@@ -11,38 +11,63 @@ import {
   useHistory,
 } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
-import MainPage from "pages/mainPage/MainPage";
+import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
+export enum WeekDays {
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+}
+export interface EntranceShape {
+  workType: WorkTypes;
+  workDescription: string;
+}
 interface UserShape {
   name: string;
   phoneNumber: string;
   hasEntered: boolean;
   lastActivityTime: Date | null;
+  workType: WorkTypes | null;
+  workDescription: string | null;
 }
 const initialCurrentUserState = {
   name: "",
   phoneNumber: "",
   hasEntered: false,
   lastActivityTime: null,
+  workType: null,
+  workDescription: null,
 };
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserShape>(
     initialCurrentUserState
   );
-  const history = useHistory();
-  const SubmitEntrance = useCallback(() => {
-    setCurrentUser((currentUser) => ({
-      ...currentUser,
-      hasEntered: true,
-      lastActivityTime: new Date(),
-    }));
-  }, []);
+  const SubmitEntrance = useCallback(
+    ({ workType, workDescription }: EntranceShape) => {
+      console.log(workType, workDescription);
+      setCurrentUser((currentUser) => ({
+        ...currentUser,
+        hasEntered: true,
+        lastActivityTime: new Date(),
+        workDescription,
+        workType,
+      }));
+    },
+    []
+  );
   const SubmitExit = useCallback(() => {
+    console.log("left");
     setCurrentUser((currentUser) => ({
       ...currentUser,
       hasEntered: false,
       lastActivityTime: new Date(),
+      workType: null,
+      workDescription: null,
     }));
   }, []);
   useEffect(() => {
@@ -62,7 +87,8 @@ function App() {
     }
     if (currentUser.lastActivityTime !== null) {
       console.log(
-        moment(currentUser.lastActivityTime).format("MMMM Do YYYY, h:mm:ss a")
+        moment(currentUser.lastActivityTime).format("MMMM Do YYYY, h:mm:ss a"),
+        WeekDays[new Date(currentUser.lastActivityTime).getDay()]
       );
     }
   }, [currentUser]);
@@ -71,6 +97,7 @@ function App() {
     setCurrentUser(initialCurrentUserState);
     setIsAuthenticated(false);
   }, []);
+
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, currentUser, setIsAuthenticated }}

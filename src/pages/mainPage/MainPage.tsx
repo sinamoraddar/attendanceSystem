@@ -1,24 +1,82 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { AuthContext } from "./../../contexts/AuthContext";
+import { AuthContext } from "contexts/AuthContext";
+import { EntranceShape, WeekDays } from "App";
+
+export enum WorkTypes {
+  InOffice = "In Office",
+  Remote = "Remote",
+}
 
 const MainPage = ({
   SubmitEntrance,
   SubmitExit,
 }: {
-  SubmitEntrance: () => void;
+  SubmitEntrance: ({ workType }: EntranceShape) => void;
   SubmitExit: () => void;
 }) => {
+  //context
   const { isAuthenticated, currentUser } = useContext(AuthContext);
-
+  //state
+  const [error, setError] = useState<string>("");
+  const [workType, setWorkType] = useState<WorkTypes>(WorkTypes.InOffice);
+  const [workDescription, setWorkDescription] = useState<string>("");
+  //callbacks
+  const onSelectChange = useCallback((e) => {
+    const { value } = e.target;
+    setWorkType(value);
+  }, []);
+  const onTextareaChange = useCallback((e) => {
+    const { value } = e.target;
+    setWorkDescription(value);
+  }, []);
+  useEffect(() => {
+    if (
+      new Date().getDay() === WeekDays.Thursday ||
+      new Date().getDay() === WeekDays.Friday
+    ) {
+      setError("ثبت ورود و خروج در روز های تعطیل امکان پذیر نیست");
+    }
+  }, []);
   return isAuthenticated ? (
-    <div>
-      {currentUser.hasEntered ? (
-        <button onClick={SubmitExit}>ثبت خروج از شرکت</button>
-      ) : (
-        <button onClick={SubmitEntrance}>ثبت ورود به شرکت</button>
-      )}
-    </div>
+    error.length > 0 ? (
+      <h3>{error}</h3>
+    ) : (
+      <div>
+        {currentUser.hasEntered ? (
+          <button onClick={SubmitExit}>ثبت خروج از شرکت</button>
+        ) : (
+          <>
+            <label htmlFor="workType">لطفا نوع کار خود را انتخاب کنید</label>
+            <select
+              onChange={onSelectChange}
+              id="workType"
+              name="workType"
+              value={workType}
+            >
+              <option>{WorkTypes.Remote}</option>
+              <option>{WorkTypes.InOffice}</option>
+            </select>
+            <label htmlFor="activityDetails">
+              خلاصه فعالیت هاتون رو اینجا وارد کنید
+            </label>
+
+            <textarea
+              name="activityDetails"
+              id="activityDetails"
+              placeholder="خلاصه فعالیت..."
+              onChange={onTextareaChange}
+              value={workDescription}
+            ></textarea>
+            <button
+              onClick={SubmitEntrance.bind(null, { workType, workDescription })}
+            >
+              ثبت ورود به شرکت
+            </button>
+          </>
+        )}
+      </div>
+    )
   ) : (
     <Redirect to="/authentication" />
   );

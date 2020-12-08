@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import LoginForm from "components/forms/loginForm/LoginForm";
 import SignUpForm, {
   AuthenticationConstants,
 } from "components/forms/authForm/AuthForm";
