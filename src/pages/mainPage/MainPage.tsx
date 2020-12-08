@@ -1,11 +1,24 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { AuthContext } from "./../../contexts/AuthContext";
 
-const MainPage = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+const MainPage = ({
+  SubmitEntrance,
+  SubmitExit,
+}: {
+  SubmitEntrance: () => void;
+  SubmitExit: () => void;
+}) => {
+  const { isAuthenticated, currentUser } = useContext(AuthContext);
+
   return isAuthenticated ? (
-    <div>main page </div>
+    <div>
+      {currentUser.hasEntered ? (
+        <button onClick={SubmitExit}>ثبت خروج از شرکت</button>
+      ) : (
+        <button onClick={SubmitEntrance}>ثبت ورود به شرکت</button>
+      )}
+    </div>
   ) : (
     <Redirect to="/authentication" />
   );

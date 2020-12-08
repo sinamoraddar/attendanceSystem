@@ -32,7 +32,7 @@ const SignUpForm = ({ type }: FormInterface) => {
       if (type === AuthenticationConstants.SignUp) {
         localStorage.setItem(
           AuthenticationConstants.AuthenticatedUser,
-          JSON.stringify({ name, phoneNumber })
+          JSON.stringify({ name, phoneNumber, hasEntered: false })
         );
         setIsAuthenticated(true);
       } else {

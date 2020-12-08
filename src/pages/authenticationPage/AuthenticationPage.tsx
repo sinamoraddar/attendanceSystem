@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import LoginForm from "components/forms/loginForm/LoginForm";
 import SignUpForm, {
   AuthenticationConstants,
-} from "components/forms/signUpForm/SignUpForm";
+} from "components/forms/authForm/AuthForm";
 import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
 

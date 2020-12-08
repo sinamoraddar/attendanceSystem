@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import moment from "moment";
 import "./App.css";
 import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
 import {
@@ -11,12 +12,39 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import MainPage from "pages/mainPage/MainPage";
-import { AuthenticationConstants } from "components/forms/signUpForm/SignUpForm";
-const initialCurrentUserState = { name: "", phoneNumber: "" };
+import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
+interface UserShape {
+  name: string;
+  phoneNumber: string;
+  hasEntered: boolean;
+  lastActivityTime: Date | null;
+}
+const initialCurrentUserState = {
+  name: "",
+  phoneNumber: "",
+  hasEntered: false,
+  lastActivityTime: null,
+};
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState(initialCurrentUserState);
+  const [currentUser, setCurrentUser] = useState<UserShape>(
+    initialCurrentUserState
+  );
   const history = useHistory();
+  const SubmitEntrance = useCallback(() => {
+    setCurrentUser((currentUser) => ({
+      ...currentUser,
+      hasEntered: true,
+      lastActivityTime: new Date(),
+    }));
+  }, []);
+  const SubmitExit = useCallback(() => {
+    setCurrentUser((currentUser) => ({
+      ...currentUser,
+      hasEntered: false,
+      lastActivityTime: new Date(),
+    }));
+  }, []);
   useEffect(() => {
     let localUser = localStorage.getItem(
       AuthenticationConstants.AuthenticatedUser
@@ -25,6 +53,19 @@ function App() {
       setCurrentUser(JSON.parse(localUser));
     }
   }, [isAuthenticated]);
+  useEffect(() => {
+    if (currentUser.name !== "") {
+      localStorage.setItem(
+        AuthenticationConstants.AuthenticatedUser,
+        JSON.stringify(currentUser)
+      );
+    }
+    if (currentUser.lastActivityTime !== null) {
+      console.log(
+        moment(currentUser.lastActivityTime).format("MMMM Do YYYY, h:mm:ss a")
+      );
+    }
+  }, [currentUser]);
   const OnExit = useCallback(() => {
     localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
     setCurrentUser(initialCurrentUserState);
@@ -36,10 +77,14 @@ function App() {
     >
       <Router>
         {currentUser.name !== "" ? (
-          <button onClick={OnExit}>خروج</button>
+          <button onClick={OnExit}> خروج از سیستم</button>
         ) : null}
         <Switch>
-          <Route path="/" exact component={MainPage} />
+          <Route
+            path="/"
+            exact
+            render={(props) => <MainPage {...{ SubmitEntrance, SubmitExit }} />}
+          />
           <Route path="/authentication" exact component={AuthenticationPage} />
         </Switch>
       </Router>
