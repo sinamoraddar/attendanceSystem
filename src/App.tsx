@@ -34,7 +34,7 @@ export interface UserShape {
     entranceTime: Date | null;
     exitTime: Date | null;
     workType: WorkTypes | null;
-    workDescription?: string | null;
+    workDescription: string;
   }[];
 }
 function App() {
@@ -66,6 +66,7 @@ function App() {
             entranceTime: new Date(),
             exitTime: null,
             workType,
+            workDescription: "",
           },
         ],
       }));
@@ -138,9 +139,14 @@ function App() {
     }
   }, [currentUser]);
   const OnExit = useCallback(() => {
-    localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
-    setCurrentUser(initialCurrentUserState);
-    setIsAuthenticated(false);
+    const confirmed = window.confirm(
+      "در صورت خروج تمام اطلاعات شما پاک خواهد شد . آیا مطمئن هستید؟"
+    );
+    if (confirmed) {
+      localStorage.removeItem(AuthenticationConstants.AuthenticatedUser);
+      setCurrentUser(initialCurrentUserState);
+      setIsAuthenticated(false);
+    }
   }, []);
 
   return (

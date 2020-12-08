@@ -4,6 +4,7 @@ import { AuthContext } from "contexts/AuthContext";
 import { EntranceShape, WeekDays } from "App";
 import moment from "moment";
 export enum WorkTypes {
+  All = "All",
   InOffice = "In Office",
   Remote = "Remote",
 }
