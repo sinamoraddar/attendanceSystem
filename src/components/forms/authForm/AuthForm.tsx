@@ -18,9 +18,12 @@ interface FormInterface {
 }
 const SignUpForm = ({ type }: FormInterface) => {
   //context
-  const { currentUser, setIsAuthenticated, isAuthenticated } = useContext(
-    AuthContext
-  );
+  const {
+    currentUser,
+    setIsAuthenticated,
+    isAuthenticated,
+    signUpTheUser,
+  } = useContext(AuthContext);
   //state
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -30,11 +33,7 @@ const SignUpForm = ({ type }: FormInterface) => {
       e.preventDefault();
 
       if (type === AuthenticationConstants.SignUp) {
-        localStorage.setItem(
-          AuthenticationConstants.AuthenticatedUser,
-          JSON.stringify({ name, phoneNumber, hasEntered: false })
-        );
-        setIsAuthenticated(true);
+        signUpTheUser({ name, phoneNumber });
       } else {
         if (phoneNumber === currentUser.phoneNumber) {
           setIsAuthenticated(true);
@@ -43,11 +42,10 @@ const SignUpForm = ({ type }: FormInterface) => {
         }
       }
     },
-    [name, phoneNumber, setIsAuthenticated, currentUser, type]
+    [name, phoneNumber, setIsAuthenticated, currentUser, type, signUpTheUser]
   );
 
   const onInputChange = useCallback((label, e: any) => {
-    console.log(e.target.value, label);
     const { value } = e.target;
     switch (label) {
       case InputTypes.Name: {

@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import { EntranceShape, WeekDays } from "App";
-
+import moment from "moment";
 export enum WorkTypes {
   InOffice = "In Office",
   Remote = "Remote",
@@ -43,8 +43,19 @@ const MainPage = ({
       <h3>{error}</h3>
     ) : (
       <div>
-        {currentUser.hasEntered ? (
+        {currentUser.activityLog.length > 0 &&
+        currentUser.activityLog[currentUser.activityLog.length - 1]
+          .hasEntered &&
+        currentUser.activityLog[currentUser.activityLog.length - 1].exitTime ===
+          null ? (
           <>
+            <h3>
+              ورود در :
+              {moment(
+                currentUser.activityLog[currentUser.activityLog.length - 1]
+                  .entranceTime
+              ).format("h:mm:ss a")}
+            </h3>
             <label htmlFor="activityDetails">
               خلاصه فعالیت هاتون رو اینجا وارد کنید
             </label>
@@ -76,6 +87,12 @@ const MainPage = ({
             <button onClick={SubmitEntrance.bind(null, { workType })}>
               ثبت ورود به شرکت
             </button>
+          </>
+        )}
+
+        {currentUser.activityLog.length > 0 && (
+          <>
+            <Link to="/details">Details</Link>
           </>
         )}
       </div>

@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
+import { nanoid } from "nanoid";
+
 import "./App.css";
 import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
+import { initialCurrentUserState } from "contexts/AuthContext";
+import DetailsPage from "pages/detailsPage/DetailsPage";
 export enum WeekDays {
   Sunday,
   Monday,
@@ -19,58 +23,93 @@ export interface EntranceShape {
   workType: WorkTypes;
   workDescription: string;
 }
-interface UserShape {
+export interface UserShape {
   name: string;
   phoneNumber: string;
-  hasEntered: boolean;
-  lastActivityTime: Date | null;
-  workType: WorkTypes | null;
-  workDescription: string | null;
+
+  activityLog: {
+    id: string;
+    hasEntered: boolean;
+    hasExited: boolean;
+    entranceTime: Date | null;
+    exitTime: Date | null;
+    workType: WorkTypes | null;
+    workDescription?: string | null;
+  }[];
 }
-const initialCurrentUserState = {
-  name: "",
-  phoneNumber: "",
-  hasEntered: false,
-  lastActivityTime: null,
-  workType: null,
-  workDescription: null,
-};
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserShape>(
     initialCurrentUserState
   );
+  const signUpTheUser = useCallback(
+    ({ name, phoneNumber }: { name: string; phoneNumber: string }) => {
+      setCurrentUser((currentUser) => ({
+        ...currentUser,
+        name,
+        phoneNumber,
+      }));
+      setIsAuthenticated(true);
+    },
+    []
+  );
   const SubmitEntrance = useCallback(
     ({ workType }: { workType: WorkTypes }) => {
       setCurrentUser((currentUser) => ({
         ...currentUser,
-        hasEntered: true,
-        lastActivityTime: new Date(),
-        workType,
+        activityLog: [
+          ...currentUser.activityLog,
+          {
+            id: nanoid(),
+            hasEntered: true,
+            hasExited: false,
+            entranceTime: new Date(),
+            exitTime: null,
+            workType,
+          },
+        ],
       }));
     },
     []
   );
   const SubmitExit = useCallback(
     ({ workDescription }: { workDescription: string }) => {
-      console.log("left");
-      const now = moment();
-      const lastTime = moment(currentUser.lastActivityTime);
-      if (now.diff(lastTime, "minute") > 10) {
-        setCurrentUser((currentUser) => ({
-          ...currentUser,
-          hasEntered: false,
-          lastActivityTime: new Date(),
-          workDescription,
-        }));
-      } else {
-        alert(
-          "خطا!برای ثبت خروج باید از آخرین ورود شما بیش از 10 دقیقه گذشته باشد"
+      if (currentUser.activityLog.length > 0) {
+        console.log("left");
+        const now = moment();
+        const lastTime = moment(
+          currentUser.activityLog[currentUser.activityLog.length - 1]
+            .entranceTime
         );
+        if (!(now.diff(lastTime, "minute") > 10)) {
+          setCurrentUser((currentUser) => {
+            const newActivityLog = currentUser.activityLog.map(
+              (activity, index, array) => {
+                return index === array.length - 1
+                  ? {
+                      ...activity,
+                      hasExited: true,
+                      exitTime: new Date(),
+                      workDescription,
+                    }
+                  : activity;
+              }
+            );
+            return {
+              ...currentUser,
+              activityLog: newActivityLog,
+            };
+          });
+        } else {
+          alert(
+            "خطا!برای ثبت خروج باید از آخرین ورود شما بیش از 10 دقیقه گذشته باشد"
+          );
+        }
       }
     },
     [currentUser]
   );
+  //get the current user from local storage on the initial render
   useEffect(() => {
     let localUser = localStorage.getItem(
       AuthenticationConstants.AuthenticatedUser
@@ -78,7 +117,7 @@ function App() {
     if (localUser !== null) {
       setCurrentUser(JSON.parse(localUser));
     }
-  }, [isAuthenticated]);
+  }, []);
   useEffect(() => {
     if (currentUser.name !== "") {
       localStorage.setItem(
@@ -86,11 +125,16 @@ function App() {
         JSON.stringify(currentUser)
       );
     }
-    if (currentUser.lastActivityTime !== null) {
-      console.log(
-        moment(currentUser.lastActivityTime).format("MMMM Do YYYY, h:mm:ss a"),
-        WeekDays[new Date(currentUser.lastActivityTime).getDay()]
-      );
+    if (currentUser.activityLog.length > 0) {
+      const lastActivityTime =
+        currentUser.activityLog[currentUser.activityLog.length - 1]
+          .entranceTime;
+      if (lastActivityTime !== null) {
+        console.log(
+          moment(lastActivityTime).format("MMMM Do YYYY, h:mm:ss a"),
+          WeekDays[new Date(lastActivityTime).getDay()]
+        );
+      }
     }
   }, [currentUser]);
   const OnExit = useCallback(() => {
@@ -101,7 +145,12 @@ function App() {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, currentUser, setIsAuthenticated }}
+      value={{
+        isAuthenticated,
+        currentUser,
+        setIsAuthenticated,
+        signUpTheUser,
+      }}
     >
       <Router>
         {currentUser.name !== "" ? (
@@ -113,6 +162,7 @@ function App() {
             exact
             render={(props) => <MainPage {...{ SubmitEntrance, SubmitExit }} />}
           />
+          <Route path="/details" exact component={DetailsPage} />
           <Route path="/authentication" exact component={AuthenticationPage} />
         </Switch>
       </Router>

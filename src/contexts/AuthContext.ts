@@ -1,12 +1,28 @@
 import { createContext } from "react";
+import { UserShape } from "App";
+
+export const initialCurrentUserState: UserShape = {
+  name: "",
+  phoneNumber: "",
+  activityLog: [],
+};
+
 interface AuthInterface {
   isAuthenticated: boolean;
-  currentUser: { name: any; phoneNumber: any; hasEntered: boolean };
+  currentUser: UserShape;
   setIsAuthenticated: any;
+  signUpTheUser: ({
+    name,
+    phoneNumber,
+  }: {
+    name: string;
+    phoneNumber: string;
+  }) => void;
 }
 
 export const AuthContext = createContext<AuthInterface>({
   isAuthenticated: false,
-  currentUser: { name: "", phoneNumber: "", hasEntered: false },
+  currentUser: initialCurrentUserState,
   setIsAuthenticated: () => {},
+  signUpTheUser: () => {},
 });
