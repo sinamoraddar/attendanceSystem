@@ -2,7 +2,11 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import { EntranceShape, WeekDays } from "App";
+
 import moment from "moment";
+//styles
+import styles from "./MainPage.module.scss";
+
 export enum WorkTypes {
   All = "All",
   InOffice = "In Office",

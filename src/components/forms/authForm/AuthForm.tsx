@@ -1,7 +1,9 @@
 import React, { useCallback, useContext, useState } from "react";
-import { TextField } from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
+//styles
+import styles from "./AuthForm.module.scss";
 //constants
 enum InputTypes {
   Name = "Name",
@@ -63,14 +65,14 @@ const SignUpForm = ({ type }: FormInterface) => {
   return isAuthenticated ? (
     <Redirect to="/" />
   ) : (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={styles.form}>
       {type === AuthenticationConstants.SignUp ? (
         <>
-          sign up
+          <h2>ثبت نام</h2>
           <TextField
             required
             id="standard-required"
-            label={InputTypes.Name}
+            label={"نام"}
             value={name}
             onChange={onInputChange.bind(null, InputTypes.Name)}
             type="text"
@@ -78,7 +80,7 @@ const SignUpForm = ({ type }: FormInterface) => {
           <TextField
             required
             id="standard-required"
-            label={InputTypes.PhoneNumber}
+            label={"شماره تلفن"}
             type="number"
             value={phoneNumber}
             onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
@@ -86,11 +88,11 @@ const SignUpForm = ({ type }: FormInterface) => {
         </>
       ) : (
         <>
-          Log in
+          <h2>ورود</h2>
           <TextField
             required
             id="standard-required"
-            label={InputTypes.PhoneNumber}
+            label={"شماره تلفن"}
             type="number"
             value={phoneNumber}
             onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
@@ -98,7 +100,9 @@ const SignUpForm = ({ type }: FormInterface) => {
         </>
       )}
 
-      <button type="submit">{type}</button>
+      <Button type="submit" variant="contained" color="secondary">
+        {type}
+      </Button>
     </form>
   );
 };

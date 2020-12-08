@@ -1,0 +1,10 @@
+* {
+  box-sizing: border-box;
+  direction: rtl;
+}
+#root {
+  background-color: $grey;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

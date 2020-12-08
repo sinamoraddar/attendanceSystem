@@ -4,13 +4,14 @@ import SignUpForm, {
 } from "components/forms/authForm/AuthForm";
 import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
-
+//styles
+import styles from "./AuthenticationPage.module.scss";
 const AuthenticationPage = () => {
   const { currentUser, isAuthenticated } = useContext(AuthContext);
   return isAuthenticated ? (
     <Redirect to="/" />
   ) : (
-    <div>
+    <div className={styles.container}>
       {currentUser.name}
       <SignUpForm
         type={

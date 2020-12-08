@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import { nanoid } from "nanoid";
-
-import "./App.css";
 import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
@@ -10,6 +8,10 @@ import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
 import { initialCurrentUserState } from "contexts/AuthContext";
 import DetailsPage from "pages/detailsPage/DetailsPage";
+
+//styles
+import styles from "./App.module.scss";
+import { Button } from "@material-ui/core";
 export enum WeekDays {
   Sunday,
   Monday,
@@ -159,9 +161,19 @@ function App() {
       }}
     >
       <Router>
-        {currentUser.name !== "" ? (
-          <button onClick={OnExit}> خروج از سیستم</button>
-        ) : null}
+        <header className={styles.header}>
+          {currentUser.name !== "" ? (
+            <Button
+              variant="contained"
+              color="primary"
+              className={styles.button}
+              onClick={OnExit}
+            >
+              خروج از سیستم
+            </Button>
+          ) : null}
+          <h1>سامانه حضور و غیاب</h1>
+        </header>
         <Switch>
           <Route
             path="/"

@@ -1,0 +1,23 @@
+@import "assets/styles/sass/index.scss";
+.form {
+  background-color: $blue;
+  width: 50%;
+  border-radius: $lightBorderRadius;
+  padding: $lightPadding;
+  @include flex(center, center);
+  flex-direction: column;
+  > * {
+    margin: 1em !important;
+  }
+  * {
+    color: $grey !important;
+  }
+  > {
+    button {
+      background-color: $pink;
+    }
+    input {
+      direction: ltr;
+    }
+  }
+}

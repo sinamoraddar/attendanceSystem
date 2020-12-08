@@ -23,3 +23,10 @@
     url("Vazir-Light.ttf") format("truetype");
   font-weight: 300;
 }
+*,
+input {
+  font-family: "Vazir", sans-serif !important;
+}
+input {
+  direction: ltr;
+}

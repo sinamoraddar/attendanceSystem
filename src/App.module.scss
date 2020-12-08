@@ -1,0 +1,19 @@
+@import "assets/styles/sass/index.scss";
+.button {
+  background-color: $blue !important;
+}
+
+.header {
+  background-color: $turquoise;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $normalPadding;
+  color: white;
+  h1 {
+    flex: 1 auto;
+    text-align: right;
+  }
+}
