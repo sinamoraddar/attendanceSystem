@@ -2,16 +2,32 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import { nanoid } from "nanoid";
 import AuthenticationPage from "pages/authenticationPage/AuthenticationPage";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useHistory,
+  Redirect,
+  Link,
+} from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import MainPage, { WorkTypes } from "pages/mainPage/MainPage";
 import { AuthenticationConstants } from "components/forms/authForm/AuthForm";
 import { initialCurrentUserState } from "contexts/AuthContext";
 import DetailsPage from "pages/detailsPage/DetailsPage";
-
+import ListAltIcon from "@material-ui/icons/ListAlt";
+import HomeIcon from "@material-ui/icons/Home";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Button,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 //styles
 import styles from "./App.module.scss";
-import { Avatar, Button } from "@material-ui/core";
 export enum WeekDays {
   Sunday,
   Monday,
@@ -40,10 +56,31 @@ export interface UserShape {
   }[];
 }
 function App() {
+  //state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserShape>(
     initialCurrentUserState
   );
+  const [value, setValue] = useState(0);
+  //third party hooks
+  const history = useHistory();
+  //life cycle hooks
+
+  useEffect(() => {
+    // if (isAuthenticated) {
+    switch (value) {
+      case 0: {
+        // history.push("/");
+        break;
+      }
+      case 1: {
+        // history.push("/details");
+        break;
+      }
+    }
+    // }
+  }, [value, history, isAuthenticated]);
+  //callbacks
   const signUpTheUser = useCallback(
     ({ name, phoneNumber }: { name: string; phoneNumber: string }) => {
       setCurrentUser((currentUser) => ({
@@ -194,6 +231,28 @@ function App() {
           <Route path="/details" exact component={DetailsPage} />
           <Route path="/authentication" exact component={AuthenticationPage} />
         </Switch>
+        {isAuthenticated && (
+          <BottomNavigation
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            showLabels
+          >
+            <BottomNavigationAction
+              component={Link}
+              to="/"
+              label="خانه"
+              icon={<HomeIcon />}
+            />
+            <BottomNavigationAction
+              label="لیست گزارش ها"
+              component={Link}
+              to="/details"
+              icon={<ListAltIcon />}
+            ></BottomNavigationAction>
+          </BottomNavigation>
+        )}
       </Router>
     </AuthContext.Provider>
   );

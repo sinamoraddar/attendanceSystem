@@ -1,12 +1,18 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
 import { EntranceShape, WeekDays } from "App";
-
 import moment from "moment";
 //styles
 import styles from "./MainPage.module.scss";
-import { Button, InputLabel, MenuItem, Select } from "@material-ui/core";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Button,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 
 export enum WorkTypes {
   All = "All",
@@ -27,6 +33,7 @@ const MainPage = ({
   const [error, setError] = useState<string>("");
   const [workType, setWorkType] = useState<WorkTypes>(WorkTypes.InOffice);
   const [workDescription, setWorkDescription] = useState<string>("");
+
   //callbacks
   const onSelectChange = useCallback((e) => {
     const { value } = e.target;
@@ -73,7 +80,7 @@ const MainPage = ({
               <textarea
                 name="activityDetails"
                 id="activityDetails"
-                placeholder="خلاصه فعالیت..."
+                placeholder="خلاصه فعالیت ها..."
                 onChange={onTextareaChange}
                 value={workDescription}
               ></textarea>
@@ -113,11 +120,6 @@ const MainPage = ({
             </>
           )}
         </div>
-        {currentUser.activityLog.length > 0 && (
-          <>
-            <Link to="/details">Details</Link>
-          </>
-        )}
       </div>
     )
   ) : (

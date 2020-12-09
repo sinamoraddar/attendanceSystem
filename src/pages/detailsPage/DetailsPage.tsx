@@ -3,6 +3,8 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import moment from "moment";
 import { WorkTypes } from "pages/mainPage/MainPage";
+//styles
+import styles from "./DetailsPage.module.scss";
 const DetailsPage = () => {
   //context
   const {
@@ -71,7 +73,7 @@ const DetailsPage = () => {
     return () => clearInterval(basicInterval);
   }, [activityLog, handleCurrentWorkDuration]);
   return isAuthenticated ? (
-    <div>
+    <div className={styles.container}>
       <input
         placeholder="جستجو در میان فعالیت ها"
         value={searchInput}
@@ -89,32 +91,39 @@ const DetailsPage = () => {
         <option>{WorkTypes.Remote}</option>
       </select>
 
-      <Link to="/">Back to home page</Link>
-      <ol>
-        {activityLog
-          .filter(
-            ({ workDescription, workType }) =>
-              workDescription?.includes(searchInput) &&
-              (workTypeFilter === WorkTypes.All || workType === workTypeFilter)
-          )
-          .map(({ workType, entranceTime, exitTime, id, workDescription }) => (
-            <li key={id}>
-              {workType},{moment(entranceTime).format("MMMM Do YYYY, h:mm:ss")},
-              {exitTime !== null ? (
-                moment(exitTime).format("MMMM Do YYYY, h:mm:ss")
-              ) : (
-                <span style={{ color: "red" }}>هنوز خارج نشده اید</span>
-              )}
-              ,
-              {exitTime !== null ? (
-                getWorkDuration({ exitTime, entranceTime })
-              ) : (
-                <span style={{ color: "blue" }}>{currentWorkDuration}</span>
-              )}
-              <span>{workDescription}</span>
-            </li>
-          ))}
-      </ol>
+      {activityLog.length > 0 ? (
+        <ol>
+          {activityLog
+            .filter(
+              ({ workDescription, workType }) =>
+                workDescription?.includes(searchInput) &&
+                (workTypeFilter === WorkTypes.All ||
+                  workType === workTypeFilter)
+            )
+            .map(
+              ({ workType, entranceTime, exitTime, id, workDescription }) => (
+                <li key={id}>
+                  {workType},
+                  {moment(entranceTime).format("MMMM Do YYYY, h:mm:ss")},
+                  {exitTime !== null ? (
+                    moment(exitTime).format("MMMM Do YYYY, h:mm:ss")
+                  ) : (
+                    <span style={{ color: "red" }}>هنوز خارج نشده اید</span>
+                  )}
+                  ,
+                  {exitTime !== null ? (
+                    getWorkDuration({ exitTime, entranceTime })
+                  ) : (
+                    <span style={{ color: "blue" }}>{currentWorkDuration}</span>
+                  )}
+                  <span>{workDescription}</span>
+                </li>
+              )
+            )}
+        </ol>
+      ) : (
+        <p>فعالیتی وجود ندارد</p>
+      )}
     </div>
   ) : (
     <Redirect to="/authentication" />

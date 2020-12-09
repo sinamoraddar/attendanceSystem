@@ -5,9 +5,11 @@
     @include flex(center, center);
     flex-direction: column;
   }
+  flex: 1 auto;
+  justify-content: space-between;
   .innerBox {
     background-color: $blue;
-    width: 70%;
+    width: 50%;
     padding: 1.5em;
     border-radius: $lightBorderRadius;
     h3 {
@@ -40,5 +42,9 @@
   .time {
     color: $turquoise;
     margin: 0 0.5em;
+  }
+  .bottomNavigation {
+    width: 100%;
+    flex: 1 auto;
   }
 }
