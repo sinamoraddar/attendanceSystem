@@ -30,6 +30,14 @@
       height: 150px;
       outline: none;
     }
+    @media screen and(max-width:$tabletBreakpoint) {
+      width: 90%;
+      font-size: 0.8em;
+      margin: 2em;
+      textarea {
+        width: 80%;
+      }
+    }
   }
   .select {
     background: white;
@@ -38,6 +46,7 @@
   }
   .button {
     background-color: $turquoise;
+    font-size: 1em;
   }
   .time {
     color: $turquoise;

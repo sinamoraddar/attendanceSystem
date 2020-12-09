@@ -16,6 +16,14 @@
     flex: 1 auto;
     text-align: right;
   }
+  button {
+    font-size: 1em;
+  }
+  @media screen and(max-width:$tabletBreakpoint) {
+    & {
+      font-size: 0.5em;
+    }
+  }
 }
 .avatar {
   &,

@@ -4,15 +4,22 @@
   flex: 1 auto;
   &,
   .header,
-  .header > div {
+  .header > div,
+  .innerBox {
     @include flex(center, center);
   }
   .innerBox {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: initial;
+    max-height: 400px;
     border-radius: $lightBorderRadius;
     padding: 1em 2em;
+    margin: 1em 0;
     background-color: $blue;
     * {
       color: $grey;
+      font-size: 1em;
     }
     width: 70%;
     .header {
@@ -20,11 +27,23 @@
       padding: 1em;
       border-radius: $lightBorderRadius;
       justify-content: space-between;
+      flex-wrap: wrap;
+      * {
+        line-height: 1.5;
+      }
+      > div {
+        margin: 1em 0;
+      }
       div:last-of-type {
         label {
           margin: 0 1em;
         }
       }
+    }
+    p {
+      text-align: center;
+      color: red;
+      margin: 1em 0;
     }
     .select {
       background: white;
@@ -34,12 +53,28 @@
         color: black !important;
       }
     }
+    @media screen and(max-width:$tabletBreakpoint) {
+      .header {
+        flex-direction: column;
+        font-size: 0.8em;
+      }
+      width: 90%;
+    }
   }
   .tableContainer {
     width: 100%;
     overflow: auto;
+    flex: 1 auto;
+    margin: 1em 0;
+
     table {
       min-width: 1000px;
+      * {
+        font-size: 1em;
+      }
+      @media screen and(max-width:$tabletBreakpoint) {
+        font-size: 0.8em;
+      }
     }
   }
   .red {
