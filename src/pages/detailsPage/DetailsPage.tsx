@@ -5,6 +5,16 @@ import moment from "moment";
 import { WorkTypes } from "pages/mainPage/MainPage";
 //styles
 import styles from "./DetailsPage.module.scss";
+import {
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import { InputLabel, TextField } from "@material-ui/core";
+import { MenuItem } from "@material-ui/core";
 const DetailsPage = () => {
   //context
   const {
@@ -28,7 +38,6 @@ const DetailsPage = () => {
   }, []);
   const getWorkDuration = useCallback(({ exitTime, entranceTime }) => {
     return `
-       Work duration:
           ${moment
             .duration(
               moment(exitTime === null ? new Date() : exitTime).diff(
@@ -36,7 +45,7 @@ const DetailsPage = () => {
               )
             )
             .hours()}
-          hours
+          ساعت
           ${moment
             .duration(
               moment(exitTime === null ? new Date() : exitTime).diff(
@@ -44,7 +53,7 @@ const DetailsPage = () => {
               )
             )
             .minutes()}
-          minutes
+          دقیقه
           ${moment
             .duration(
               moment(exitTime === null ? new Date() : exitTime).diff(
@@ -52,7 +61,7 @@ const DetailsPage = () => {
               )
             )
             .seconds()}
-          seconds
+          ثانیه
    `;
   }, []);
   const handleCurrentWorkDuration = useCallback(() => {
@@ -74,56 +83,98 @@ const DetailsPage = () => {
   }, [activityLog, handleCurrentWorkDuration]);
   return isAuthenticated ? (
     <div className={styles.container}>
-      <input
-        placeholder="جستجو در میان فعالیت ها"
-        value={searchInput}
-        onChange={onSearchInputChange}
-      />
-      <label htmlFor="workType">لطفا نوع کار خود را انتخاب کنید</label>
-      <select
-        onChange={onSelectChange}
-        id="workType"
-        name="workType"
-        value={workTypeFilter}
-      >
-        <option>{WorkTypes.All}</option>
-        <option>{WorkTypes.InOffice}</option>
-        <option>{WorkTypes.Remote}</option>
-      </select>
-
-      {activityLog.length > 0 ? (
-        <ol>
-          {activityLog
-            .filter(
-              ({ workDescription, workType }) =>
-                workDescription?.includes(searchInput) &&
-                (workTypeFilter === WorkTypes.All ||
-                  workType === workTypeFilter)
-            )
-            .map(
-              ({ workType, entranceTime, exitTime, id, workDescription }) => (
-                <li key={id}>
-                  {workType},
-                  {moment(entranceTime).format("MMMM Do YYYY, h:mm:ss")},
-                  {exitTime !== null ? (
-                    moment(exitTime).format("MMMM Do YYYY, h:mm:ss")
-                  ) : (
-                    <span style={{ color: "red" }}>هنوز خارج نشده اید</span>
+      <div className={styles.innerBox}>
+        <div className={styles.header}>
+          <TextField
+            label="جستجو در میان فعالیت ها"
+            value={searchInput}
+            onChange={onSearchInputChange}
+            type="text"
+          />
+          <div>
+            <InputLabel id="demo-simple-select-helper-label">
+              لطفا نوع کار خود را انتخاب کنید
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-helper-label"
+              id="demo-simple-select-helper"
+              value={workTypeFilter}
+              onChange={onSelectChange}
+              name="workType"
+              className={styles.select}
+            >
+              <MenuItem value={WorkTypes.All}>{WorkTypes.All}</MenuItem>
+              <MenuItem value={WorkTypes.Remote}>{WorkTypes.Remote}</MenuItem>
+              <MenuItem value={WorkTypes.InOffice}>
+                {WorkTypes.InOffice}
+              </MenuItem>
+            </Select>
+          </div>
+        </div>
+        {activityLog.length > 0 ? (
+          <div className={styles.tableContainer}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>نوع</TableCell>
+                  <TableCell align="right">زمان ورود</TableCell>
+                  <TableCell align="right">زمان خروج</TableCell>
+                  <TableCell align="right">مدت زمان کارکرد</TableCell>
+                  <TableCell align="right">شرح فعالیت ها</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {activityLog
+                  .filter(
+                    ({ workDescription, workType }) =>
+                      workDescription?.includes(searchInput) &&
+                      (workTypeFilter === WorkTypes.All ||
+                        workType === workTypeFilter)
+                  )
+                  .map(
+                    ({
+                      workType,
+                      entranceTime,
+                      exitTime,
+                      id,
+                      workDescription,
+                    }) => (
+                      <TableRow key={id}>
+                        <TableCell component="th" scope="row" align="right">
+                          {workType}
+                        </TableCell>
+                        <TableCell align="right">
+                          {moment(entranceTime).format("MMMM Do YYYY, h:mm:ss")}
+                        </TableCell>
+                        <TableCell align="right">
+                          {exitTime !== null ? (
+                            moment(exitTime).format("MMMM Do YYYY, h:mm:ss")
+                          ) : (
+                            <span className={styles.red}>
+                              هنوز خارج نشده اید
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          {exitTime !== null ? (
+                            getWorkDuration({ exitTime, entranceTime })
+                          ) : (
+                            <span className={styles.orange}>
+                              {currentWorkDuration}
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">{workDescription}</TableCell>
+                      </TableRow>
+                    )
                   )}
-                  ,
-                  {exitTime !== null ? (
-                    getWorkDuration({ exitTime, entranceTime })
-                  ) : (
-                    <span style={{ color: "blue" }}>{currentWorkDuration}</span>
-                  )}
-                  <span>{workDescription}</span>
-                </li>
-              )
-            )}
-        </ol>
-      ) : (
-        <p>فعالیتی وجود ندارد</p>
-      )}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <p>فعالیتی وجود ندارد</p>
+        )}
+      </div>
     </div>
   ) : (
     <Redirect to="/authentication" />

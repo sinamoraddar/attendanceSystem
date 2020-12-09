@@ -1,3 +1,51 @@
+@import "assets/styles/sass/index.scss";
+
 .container {
   flex: 1 auto;
+  &,
+  .header,
+  .header > div {
+    @include flex(center, center);
+  }
+  .innerBox {
+    border-radius: $lightBorderRadius;
+    padding: 1em 2em;
+    background-color: $blue;
+    * {
+      color: $grey;
+    }
+    width: 70%;
+    .header {
+      background-color: $turquoise;
+      padding: 1em;
+      border-radius: $lightBorderRadius;
+      justify-content: space-between;
+      div:last-of-type {
+        label {
+          margin: 0 1em;
+        }
+      }
+    }
+    .select {
+      background: white;
+      border-radius: 5px;
+      padding: 0.5em 1.5em;
+      * {
+        color: black !important;
+      }
+    }
+  }
+  .tableContainer {
+    width: 100%;
+    overflow: auto;
+    table {
+      min-width: 1000px;
+    }
+  }
+  .red {
+    color: red;
+  }
+  .orange {
+    color: orange;
+  }
 }
