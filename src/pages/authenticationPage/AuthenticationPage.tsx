@@ -12,7 +12,6 @@ const AuthenticationPage = () => {
     <Redirect to="/" />
   ) : (
     <div className={styles.container}>
-      {currentUser.name}
       <SignUpForm
         type={
           currentUser.name === ""

@@ -11,7 +11,7 @@ import DetailsPage from "pages/detailsPage/DetailsPage";
 
 //styles
 import styles from "./App.module.scss";
-import { Button } from "@material-ui/core";
+import { Avatar, Button } from "@material-ui/core";
 export enum WeekDays {
   Sunday,
   Monday,
@@ -162,18 +162,29 @@ function App() {
     >
       <Router>
         <header className={styles.header}>
-          {currentUser.name !== "" ? (
-            <Button
-              variant="contained"
-              color="primary"
-              className={styles.button}
-              onClick={OnExit}
-            >
-              خروج از سیستم
-            </Button>
-          ) : null}
           <h1>سامانه حضور و غیاب</h1>
+
+          {currentUser.name !== "" ? (
+            <>
+              <Button
+                color="secondary"
+                variant="contained"
+                className={styles.button}
+                onClick={OnExit}
+              >
+                خروج از سیستم
+              </Button>
+            </>
+          ) : null}
         </header>
+        {currentUser.name !== "" && (
+          <div className={styles.avatar}>
+            <div>
+              <span>{currentUser.name}</span>
+              <Avatar>{currentUser.name.slice(0, 1).toUpperCase()}</Avatar>
+            </div>
+          </div>
+        )}
         <Switch>
           <Route
             path="/"

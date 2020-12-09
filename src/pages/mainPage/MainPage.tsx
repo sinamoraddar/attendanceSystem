@@ -6,6 +6,7 @@ import { EntranceShape, WeekDays } from "App";
 import moment from "moment";
 //styles
 import styles from "./MainPage.module.scss";
+import { Button, InputLabel, MenuItem, Select } from "@material-ui/core";
 
 export enum WorkTypes {
   All = "All",
@@ -47,54 +48,71 @@ const MainPage = ({
     error.length > 0 ? (
       <h3>{error}</h3>
     ) : (
-      <div>
-        {currentUser.activityLog.length > 0 &&
-        currentUser.activityLog[currentUser.activityLog.length - 1]
-          .hasEntered &&
-        currentUser.activityLog[currentUser.activityLog.length - 1].exitTime ===
-          null ? (
-          <>
-            <h3>
-              ورود در :
-              {moment(
-                currentUser.activityLog[currentUser.activityLog.length - 1]
-                  .entranceTime
-              ).format("h:mm:ss a")}
-            </h3>
-            <label htmlFor="activityDetails">
-              خلاصه فعالیت هاتون رو اینجا وارد کنید
-            </label>
+      <div className={styles.container}>
+        <div className={styles.innerBox}>
+          {currentUser.activityLog.length > 0 &&
+          currentUser.activityLog[currentUser.activityLog.length - 1]
+            .hasEntered &&
+          currentUser.activityLog[currentUser.activityLog.length - 1]
+            .exitTime === null ? (
+            <>
+              <h3>
+                شما در
+                <span className={styles.time}>
+                  {moment(
+                    currentUser.activityLog[currentUser.activityLog.length - 1]
+                      .entranceTime
+                  ).format("HH:mm:ss")}
+                </span>
+                وارد شرکت شدید
+              </h3>
+              <label htmlFor="activityDetails">
+                خلاصه فعالیت هاتون رو اینجا وارد کنید
+              </label>
 
-            <textarea
-              name="activityDetails"
-              id="activityDetails"
-              placeholder="خلاصه فعالیت..."
-              onChange={onTextareaChange}
-              value={workDescription}
-            ></textarea>
-            <button onClick={SubmitExit.bind(null, { workDescription })}>
-              ثبت خروج از شرکت
-            </button>
-          </>
-        ) : (
-          <>
-            <label htmlFor="workType">لطفا نوع کار خود را انتخاب کنید</label>
-            <select
-              onChange={onSelectChange}
-              id="workType"
-              name="workType"
-              value={workType}
-            >
-              <option>{WorkTypes.Remote}</option>
-              <option>{WorkTypes.InOffice}</option>
-            </select>
-
-            <button onClick={SubmitEntrance.bind(null, { workType })}>
-              ثبت ورود به شرکت
-            </button>
-          </>
-        )}
-
+              <textarea
+                name="activityDetails"
+                id="activityDetails"
+                placeholder="خلاصه فعالیت..."
+                onChange={onTextareaChange}
+                value={workDescription}
+              ></textarea>
+              <Button
+                variant={"contained"}
+                color="secondary"
+                onClick={SubmitExit.bind(null, { workDescription })}
+              >
+                ثبت خروج از شرکت
+              </Button>
+            </>
+          ) : (
+            <>
+              <InputLabel id="demo-simple-select-helper-label">
+                لطفا نوع کار خود را انتخاب کنید
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={workType}
+                onChange={onSelectChange}
+                name="workType"
+                className={styles.select}
+              >
+                <MenuItem value={WorkTypes.Remote}>{WorkTypes.Remote}</MenuItem>
+                <MenuItem value={WorkTypes.InOffice}>
+                  {WorkTypes.InOffice}
+                </MenuItem>
+              </Select>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={SubmitEntrance.bind(null, { workType })}
+              >
+                ثبت ورود به شرکت
+              </Button>
+            </>
+          )}
+        </div>
         {currentUser.activityLog.length > 0 && (
           <>
             <Link to="/details">Details</Link>

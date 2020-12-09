@@ -1,1 +1,44 @@
 @import "assets/styles/sass/index.scss";
+.container {
+  &,
+  .innerBox {
+    @include flex(center, center);
+    flex-direction: column;
+  }
+  .innerBox {
+    background-color: $blue;
+    width: 70%;
+    padding: 1.5em;
+    border-radius: $lightBorderRadius;
+    h3 {
+      margin: 2em 0;
+    }
+    &,
+    label {
+      color: $grey;
+    }
+    > * {
+      margin: 1em 0;
+    }
+    textarea {
+      padding: 1em;
+      border-radius: $lightBorderRadius;
+      resize: none;
+      width: 40%;
+      height: 150px;
+      outline: none;
+    }
+  }
+  .select {
+    background: white;
+    border-radius: 5px;
+    padding: 0.5em 1.5em;
+  }
+  .button {
+    background-color: $turquoise;
+  }
+  .time {
+    color: $turquoise;
+    margin: 0 0.5em;
+  }
+}

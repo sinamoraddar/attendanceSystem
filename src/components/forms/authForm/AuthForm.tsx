@@ -70,6 +70,7 @@ const SignUpForm = ({ type }: FormInterface) => {
         <>
           <h2>ثبت نام</h2>
           <TextField
+            autoFocus
             required
             id="standard-required"
             label={"نام"}
@@ -95,6 +96,7 @@ const SignUpForm = ({ type }: FormInterface) => {
             label={"شماره تلفن"}
             type="number"
             value={phoneNumber}
+            autoFocus
             onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
           />
         </>
