@@ -1,0 +1,5 @@
+@import "assets/styles/sass/index.scss";
+.container {
+  @include flex(center, center);
+  margin: 2em 0;
+}
