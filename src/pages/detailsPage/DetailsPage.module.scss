@@ -13,6 +13,7 @@
     justify-content: flex-start;
     align-items: initial;
     max-height: 400px;
+    min-height: 300px;
     border-radius: $lightBorderRadius;
     padding: 1em 2em;
     margin: 1em 0;
@@ -44,6 +45,10 @@
       text-align: center;
       color: red;
       margin: 1em 0;
+      flex: 1 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .select {
       background: white;

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { AuthContext } from "contexts/AuthContext";
 import { Redirect } from "react-router-dom";
@@ -62,50 +62,53 @@ const SignUpForm = ({ type }: FormInterface) => {
       }
     }
   }, []);
+
   return isAuthenticated ? (
     <Redirect to="/" />
   ) : (
-    <form onSubmit={onSubmit} className={styles.form}>
-      {type === AuthenticationConstants.SignUp ? (
-        <>
-          <h2>ثبت نام</h2>
-          <TextField
-            autoFocus
-            required
-            id="standard-required"
-            label={"نام"}
-            value={name}
-            onChange={onInputChange.bind(null, InputTypes.Name)}
-            type="text"
-          />
-          <TextField
-            required
-            id="standard-required"
-            label={"شماره تلفن"}
-            type="number"
-            value={phoneNumber}
-            onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
-          />
-        </>
-      ) : (
-        <>
-          <h2>ورود</h2>
-          <TextField
-            required
-            id="standard-required"
-            label={"شماره تلفن"}
-            type="number"
-            value={phoneNumber}
-            autoFocus
-            onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
-          />
-        </>
-      )}
+    <>
+      <form onSubmit={onSubmit} className={styles.form}>
+        {type === AuthenticationConstants.SignUp ? (
+          <>
+            <h2>ثبت نام</h2>
+            <TextField
+              autoFocus
+              required
+              id="standard-required"
+              label={"نام"}
+              value={name}
+              onChange={onInputChange.bind(null, InputTypes.Name)}
+              type="text"
+            />
+            <TextField
+              required
+              id="standard-required"
+              label={"شماره تلفن"}
+              type="number"
+              value={phoneNumber}
+              onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
+            />
+          </>
+        ) : (
+          <>
+            <h2>ورود</h2>
+            <TextField
+              required
+              id="standard-required"
+              label={"شماره تلفن"}
+              type="number"
+              value={phoneNumber}
+              autoFocus
+              onChange={onInputChange.bind(null, InputTypes.PhoneNumber)}
+            />
+          </>
+        )}
 
-      <Button type="submit" variant="contained" color="secondary">
-        {type}
-      </Button>
-    </form>
+        <Button type="submit" variant="contained" color="secondary">
+          {type}
+        </Button>
+      </form>
+    </>
   );
 };
 

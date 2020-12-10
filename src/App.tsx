@@ -21,9 +21,8 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Button,
-  InputLabel,
-  MenuItem,
-  Select,
+  Dialog,
+  DialogTitle,
 } from "@material-ui/core";
 import { Avatar } from "@material-ui/core";
 //styles
@@ -62,6 +61,8 @@ function App() {
     initialCurrentUserState
   );
   const [value, setValue] = useState(0);
+  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
+
   //third party hooks
   const history = useHistory();
   //life cycle hooks
@@ -149,6 +150,23 @@ function App() {
     },
     [currentUser]
   );
+
+  //life cycle hooks
+  useEffect(() => {
+    if (isAuthenticated) {
+      setIsDialogVisible(true);
+    }
+  }, [isAuthenticated]);
+  useEffect(() => {
+    //handle dialog visibility
+    let timeout: NodeJS.Timeout;
+    if (isDialogVisible) {
+      setTimeout(() => {
+        setIsDialogVisible(false);
+      }, 1000);
+    }
+    return () => clearTimeout(timeout);
+  }, [isDialogVisible]);
   //get the current user from local storage on the initial render
   useEffect(() => {
     let localUser = localStorage.getItem(
@@ -253,6 +271,12 @@ function App() {
             ></BottomNavigationAction>
           </BottomNavigation>
         )}
+
+        <Dialog aria-labelledby="simple-dialog-title" open={isDialogVisible}>
+          <DialogTitle id="simple-dialog-title">
+            شما با موفقیت وارد شدید
+          </DialogTitle>
+        </Dialog>
       </Router>
     </AuthContext.Provider>
   );

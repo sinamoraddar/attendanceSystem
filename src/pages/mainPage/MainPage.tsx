@@ -52,10 +52,10 @@ const MainPage = ({
     }
   }, []);
   return isAuthenticated ? (
-    error.length > 0 ? (
-      <h3>{error}</h3>
-    ) : (
-      <div className={styles.container}>
+    <div className={styles.container}>
+      {error.length > 0 ? (
+        <h3>{error}</h3>
+      ) : (
         <div className={styles.innerBox}>
           {currentUser.activityLog.length > 0 &&
           currentUser.activityLog[currentUser.activityLog.length - 1]
@@ -120,8 +120,8 @@ const MainPage = ({
             </>
           )}
         </div>
-      </div>
-    )
+      )}
+    </div>
   ) : (
     <Redirect to="/authentication" />
   );
