@@ -7,15 +7,18 @@
   }
   flex: 1 auto;
   justify-content: space-between;
+  h3 {
+    margin: 2em 0;
+    padding: 0 1em;
+    text-align: center;
+  }
   .innerBox {
     background-color: $blue;
     width: 50%;
     padding: 1.5em;
     margin: 1em 0;
     border-radius: $lightBorderRadius;
-    h3 {
-      margin: 2em 0;
-    }
+
     &,
     label {
       color: $grey;
